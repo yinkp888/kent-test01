@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fastapi-app-code
+data:
+  app/__init__.py: ""
+  app/main.py: |
+    from fastapi import FastAPI
+
+    from app.routers import items
+
+    app = FastAPI(title="Kent Test 01", version="0.1.0")
+    app.include_router(items.router)
+
+
+    @app.get("/")
+    def root():
+        return {"message": "Hello World"}
+  app/routers/__init__.py: ""
+  app/routers/items.py: |
+    from fastapi import APIRouter
+
+    router = APIRouter(prefix="/items", tags=["items"])
+
+
+    @router.get("/")
+    def list_items():
+        return {"items": []}
+
+
+    @router.get("/{item_id}")
+    def get_item(item_id: int):
+        return {"item_id": item_id}
+  app/models/__init__.py: ""
+  app/models/item.py: |
+    from pydantic import BaseModel
+
+
+    class Item(BaseModel):
+        id: int
+        name: str
+        description: str | None = None
+        price: float
